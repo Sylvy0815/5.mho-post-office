@@ -27,15 +27,15 @@
 
 ```sh
 # generate venv
-python -m venv chatstereotyping
+python -m venv 5.mho
 ```
 
 ```sh
 # activate in linux
-source chatstereotyping/bin/activate
+source 5.moh/bin/activate
 
 # activate in windows
-source chatstereotyping/Scripts/activate
+source 5.mho/Scripts/activate
 ```
 
 > ---
