@@ -1,3 +1,9 @@
+# TODO. 매주 월요일 9시 부터 5분 간격으로 크롤링
+# 9시부터 10시까지 총 13회 수행하면 될듯
+
+# crontab -e
+# */5 9-10 * * 1 python3 /경로/to/your/buffet_crawler.py
+
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from bs4 import BeautifulSoup
@@ -87,20 +93,6 @@ message = {
         "text": markdown_table  # Markdown 테이블 사용
     }]
 }
-
-# Teams로 데이터 전송하는 나머지 부분...
-
-
-# # 추출된 데이터를 Teams 메시지 형식으로 변환
-# message = {
-#     "@type": "MessageCard",
-#     "@context": "http://schema.org/extensions",
-#     "summary": "주간 식단표",
-#     "sections": [{
-#         "activityTitle": "이번 주 식단표",
-#         "facts": [{"name": row[0], "value": ", ".join(row[1:])} for row in menu_data if row]
-#     }]
-# }
 
 # Teams로 데이터 전송
 response = requests.post(
