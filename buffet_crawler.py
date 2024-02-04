@@ -6,11 +6,22 @@
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
+from selenium.webdriver.chrome.options import Options
 from bs4 import BeautifulSoup
 import time
 
+# headless 모드
+# 크롬 옵션 설정
+chrome_options = Options()
+chrome_options.add_argument("--headless")  # 헤드리스 모드 활성화
+chrome_options.add_argument("--no-sandbox")  # Sandbox 비활성화
+chrome_options.add_argument("--disable-dev-shm-usage")  # 공유 메모리 사용 제한 해제
 # 웹 드라이버 초기화
-driver = webdriver.Chrome()
+driver = webdriver.Chrome(options=chrome_options)
+
+# # non-headless 모드
+# # 웹 드라이버 초기화
+# driver = webdriver.Chrome()
 
 try:
     # 웹사이트 접속
