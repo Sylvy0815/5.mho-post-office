@@ -30,7 +30,7 @@ try:
     error_found = any(yesterday_str in log for log in logs)
 except FileNotFoundError:
     error_found = False  # 로그 파일이 없는 경우, 에러 없음으로 처리
-
+error_found = True
 # 에러가 발견되었을 경우에만 작업 수행
 if error_found:
     print("이전 날 에러 발생, 작업 수행")
@@ -117,33 +117,105 @@ if error_found:
     headers = menu_data[0]
     data_rows = menu_data[1:]
 
-    # Markdown 테이블 생성
-    markdown_table = "| " + " | ".join(headers) + " |\n"  # 테이블 헤더
-    markdown_table += "|---" * len(headers) + "|\n"  # 구분선
+    ##################### 기존 markdown 형식의 table ##########################
+    # # 데이터에서 '\u200b' 문자를 공백으로 치환
+    # for i, row in enumerate(data_rows):
+    #     data_rows[i] = [cell.replace('\u200b', '.') for cell in row]
 
-    for row in data_rows:
-        markdown_table += "| " + " | ".join(row) + " |\n"
+    # # Markdown 테이블 생성
+    # markdown_table = "| " + " | ".join(headers) + " |\n"  # 테이블 헤더
+    # markdown_table += "|---" * len(headers) + "|\n"  # 구분선
 
-    # Teams 메시지로 전송할 준비
-    message = {
-        "@type": "MessageCard",
-        "@context": "http://schema.org/extensions",
-        "summary": "주간 식단표",
-        "sections": [{
-            "activityTitle": "이번 주 식단표",
-            "text": markdown_table  # Markdown 테이블 사용
-        }]
-    }
+    # for row in data_rows:
+    #     markdown_table += "| " + " | ".join(row) + " |\n"
 
-    # Teams로 데이터 전송
+    # # Teams 메시지로 전송할 준비
+    # message = {
+    #     "@type": "MessageCard",
+    #     "@context": "http://schema.org/extensions",
+    #     "summary": "주간 식단표",
+    #     "sections": [{
+    #         "activityTitle": "이번 주 식단표",
+    #         "text": markdown_table  # Markdown 테이블 사용
+    #     }]
+    # }
+
+    # # Teams로 데이터 전송
+    # response = requests.post(
+    #     webhook_url, 
+    #     data=json.dumps(message), 
+    #     headers={'Content-Type': 'application/json'}
+    # )
+
+    # # 응답 확인
+    # print(response.status_code, response.text)
+    ##################### 기존 markdown 형식의 table ##########################
+
+    ####################### Adaptive Card로 변환 #############################
+    def create_adaptive_card_with_columns(headers, data_rows):
+        # Adaptive Card 초기 구성
+        adaptive_card = {
+            "$schema": "http://adaptivecards.io/schemas/adaptive-card.json",
+            "type": "AdaptiveCard",
+            "version": "1.3",
+            "body": [
+                {
+                    "type": "TextBlock",
+                    "text": "이번 주 식단표",
+                    "size": "Large",
+                    "weight": "Bolder"
+                },
+                {
+                    "type": "ColumnSet",
+                    "separator": True,
+                    "spacing": "medium",
+                    "columns": []
+                }
+            ]
+        }
+
+        # 각 요일별로 열(Column) 추가
+        for header in headers:
+            items = [{"type": "TextBlock", "separator": True, "text": header, "wrap": True, "weight": "Bolder"}]
+
+            # 해당 요일의 모든 메뉴 항목 추가
+            menu_index = headers.index(header)
+            for row in data_rows:
+                menu_text = row[menu_index].replace('\u200b', ' ')  # '\u200b'를 공백으로 치환
+                if menu_text:  # 메뉴 텍스트가 비어있지 않은 경우에만 추가
+                    items.append({"type": "TextBlock", "text": menu_text, "wrap": True})
+
+            # 열 구성 및 추가
+            column = {
+                "type": "Column",
+                "separator": True,
+                "width": "20",
+                "items": items
+            }
+            adaptive_card["body"][1]["columns"].append(column)
+
+        return adaptive_card
+
+    # Adaptive Card 생성 및 Teams에 전송하는 부분
+    adaptive_card = create_adaptive_card_with_columns(headers, data_rows)
     response = requests.post(
-        webhook_url, 
-        data=json.dumps(message), 
+        webhook_url,
+        data=json.dumps({
+            "type": "message",
+            "attachments": [
+                {
+                    "contentType": "application/vnd.microsoft.card.adaptive",
+                    "content": adaptive_card
+                }
+            ]
+        }),
         headers={'Content-Type': 'application/json'}
     )
 
     # 응답 확인
     print(response.status_code, response.text)
+    ####################### Adaptive Card로 변환 #############################
+
 
 else:
     print("이전 날 에러 없음, 작업 중지")
