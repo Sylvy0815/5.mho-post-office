@@ -22,18 +22,6 @@ log_file_path = './error_log.txt'
 yesterday = datetime.date.today() - datetime.timedelta(days=1)
 yesterday_str = yesterday.strftime('%Y-%m-%d')
 
-<<<<<<< HEAD
-# 에러 로그 확인
-try:
-    with open(log_file_path, 'r') as file:
-        logs = file.readlines()
-    # 이전 날짜에 해당하는 에러 로그가 있는지 확인
-    error_found = any(yesterday_str in log for log in logs)
-except FileNotFoundError:
-    error_found = False  # 로그 파일이 없는 경우, 에러 없음으로 처리
-
-# # FOR TEST
-=======
 import datetime
 
 # 현재 요일을 확인 (월요일은 0, 화요일은 1, ...)
@@ -53,7 +41,6 @@ else:
         error_found = False  # 로그 파일이 없는 경우, 에러 없음으로 처리
 
 # # For Test
->>>>>>> develop
 # error_found = True
 
 # 에러가 발견되었을 경우에만 작업 수행
