@@ -29,7 +29,7 @@ today_weekday = datetime.datetime.now().weekday()
 
 # 월요일인 경우
 if today_weekday == 0:
-    error_found = False
+    error_found = True
 else:
     # 에러 로그 확인
     try:
@@ -40,8 +40,8 @@ else:
     except FileNotFoundError:
         error_found = False  # 로그 파일이 없는 경우, 에러 없음으로 처리
 
-# # For Test
-# error_found = True
+# For Test
+error_found = True
 
 # 에러가 발견되었을 경우에만 작업 수행
 if error_found:
