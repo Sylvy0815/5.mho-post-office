@@ -6,7 +6,9 @@
 
 # 월~금 9시 10분에 수행.
 # 10 9 * * 1-5 /home/containus/Sylvy_workspace/5.mho-post-office/5.mho/bin/python3 /home/containus/Sylvy_workspace/5.mho-post-office/buffet_crawler.py >> /home/containus/Sylvy_workspace/5.mho-post-office/log.txt 2>&1
-
+# 로컬
+# crontab -e
+# 10 9 * * 1-5 ~/workspace/private/5.mho-post-office/5.mho/bin/python3 ~/workspace/private/5.mho-post-office/buffet_crawler.py >> ~/workspace/private/5.mho-post-office/log.txt 2>&1
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.chrome.options import Options
